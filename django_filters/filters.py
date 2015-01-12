@@ -15,7 +15,12 @@ __all__ = [
     'OpenRangeNumericFilter', 'OpenRangeDateFilter', 'OpenRangeTimeFilter'
 ]
 
-LOOKUP_TYPES = sorted(QUERY_TERMS.keys())
+LOOKUP_TYPES = None
+
+try:
+    LOOKUP_TYPES = sorted(QUERY_TERMS.keys()) # Django 1.4
+except AttributeError:
+    LOOKUP_TYPES = sorted(list(QUERY_TERMS)) # Django >= 1.5
 
 class Filter(object):
     creation_counter = 0
@@ -167,7 +172,7 @@ class BaseOpenRangeFilter(Filter):
     Abstract class similar to RangeFilter but allows open ended ranges.
     Inheriting classes must define field_class attribute.
     """
-    
+
     def filter(self, qs, value):
         if value:
             if value.start:
